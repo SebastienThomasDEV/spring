@@ -1,0 +1,80 @@
+package com.example.demo.controller;
+
+import com.example.demo.entity.Ville;
+import com.example.demo.service.VilleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/villes")
+public class VilleController {
+
+    /**
+     * Service de gestion des villes
+     * Ce service est injecté par Spring dans le contrôleur
+     * @param villeService
+     */
+    @Autowired
+    private VilleService villeService;
+
+
+    /**
+     * Récupérer la liste des villes
+     * @return List<Ville> la liste des villes
+     */
+    @GetMapping
+    public List<Ville> getVilles() {
+        return villeService.getVilles();
+    }
+
+    /**
+     * Récupérer une ville par son id
+     * @param id l'id de la ville
+     * @return Ville la ville
+     */
+    @GetMapping("/{id}")
+    public Ville getVille(@PathVariable long id) {
+        return villeService.getVilleById(id);
+    }
+
+
+    /**
+     * Ajouter une ville
+     * @param ville la ville à ajouter
+     * @return String message de confirmation
+     */
+    @PostMapping
+    public String addVille(@RequestBody Ville ville) {
+        villeService.addVille(ville);
+        return "Ville ajoutée";
+    }
+
+
+    /**
+     * Supprimer une ville
+     * @param id l'id de la ville à supprimer
+     * @return List<Ville> la liste des villes
+     */
+    @DeleteMapping("/{id}")
+    public List<Ville> deleteVille(@PathVariable long id) {
+        villeService.deleteVille(id);
+        return villeService.getVilles();
+    }
+
+
+    /**
+     * Mettre à jour une ville
+     * @param id l'id de la ville à mettre à jour
+     * @param ville la ville mise à jour
+     * @return List<Ville> la liste des villes
+     */
+    @PutMapping("/{id}")
+    public List<Ville> updateVille(@PathVariable long id, @RequestBody Ville ville) {
+        villeService.updateVille(id, ville);
+        return villeService.getVilles();
+    }
+
+
+}
