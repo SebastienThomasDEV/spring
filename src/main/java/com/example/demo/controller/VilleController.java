@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Ville;
 import com.example.demo.service.VilleService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,7 +48,10 @@ public class VilleController {
      * @return String message de confirmation
      */
     @PostMapping
-    public String addVille(@RequestBody Ville ville) {
+    public String addVille(@Valid @RequestBody Ville ville, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return bindingResult.getAllErrors().get(0).getDefaultMessage();
+        }
         villeService.addVille(ville);
         return "Ville ajoutée";
     }
