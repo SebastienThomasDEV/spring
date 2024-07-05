@@ -2,15 +2,12 @@ package com.example.demo.service;
 
 import com.example.demo.entity.Ville;
 import com.example.demo.repository.VilleRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class VilleService {
@@ -26,6 +23,7 @@ public class VilleService {
 
     /**
      * Récupérer la liste des villes
+     *
      * @return List<Ville> la liste des villes
      */
     @Transactional
@@ -39,7 +37,7 @@ public class VilleService {
      * @return Ville la ville
      */
     @Transactional
-    public Ville getVilleById(Long id) {
+    public Ville getVilleById(Integer id) {
         return villeRepository.findById(id).orElse(null);
     }
 
@@ -58,26 +56,61 @@ public class VilleService {
      * @param id l'id de la ville à supprimer
      */
     @Transactional
-    public void deleteVille(Long id) {
+    public void deleteVille(Integer id) {
         villeRepository.deleteById(id);
     }
 
 
     /**
      * Mettre à jour une ville
-     * @param id l'id de la ville à mettre à jour
-     * @param updatedVille la ville mise à jour
-     * @return Ville la ville mise à jour
+     *
+     * @param id           l'id de la ville à mettre à jour
+     * @param ville la ville à mettre à jour
      */
     @Transactional
-    public Ville updateVille(Long id, Ville updatedVille) {
+    public void updateVille(Integer id, Ville ville) {
         if (villeRepository.existsById(id)) {
-            updatedVille.setId(id);
-            return villeRepository.save(updatedVille);
+            ville.setId(id);
+            villeRepository.save(ville);
         } else {
-            return null;
+            throw new RuntimeException("Ville non trouvée");
         }
     }
+
+
+    /**
+     * Récupérer les villes dont le nom commence par un préfixe
+     * @param prefix le préfixe
+     * @return List<Ville> la liste des villes
+     */
+    @Transactional
+    public List<Ville> getVillesByNameStartingWith(@RequestParam String prefix) {
+        return villeRepository.findByNomIsLike(prefix);
+    }
+
+
+    /**
+     * Récupérer les villes par population
+     * @param min la population minimale
+     * @return List<Ville> la liste des villes
+     */
+    @Transactional
+    public List<Ville> getVillesByPopulationGreaterThan(@RequestParam int min) {
+        return villeRepository.findByNbHabitantsIsGreaterThan(min);
+    }
+
+    /**
+     * Récupérer les villes par population
+     * @param min la population minimale
+     * @param max la population maximale
+     * @return List<Ville> la liste des villes
+     */
+    @Transactional
+    public List<Ville> getVillesByPopulationBetween(@RequestParam int min, @RequestParam int max) {
+        return villeRepository.findByNbHabitantsBetween(min, max);
+    }
+
+
 
 
 }

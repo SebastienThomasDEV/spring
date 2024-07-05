@@ -37,7 +37,7 @@ public class VilleController {
      * @return Ville la ville
      */
     @GetMapping("/{id}")
-    public Ville getVille(@PathVariable long id) {
+    public Ville getVille(@PathVariable Integer id) {
         return villeService.getVilleById(id);
     }
 
@@ -63,7 +63,7 @@ public class VilleController {
      * @return List<Ville> la liste des villes
      */
     @DeleteMapping("/{id}")
-    public List<Ville> deleteVille(@PathVariable long id) {
+    public List<Ville> deleteVille(@PathVariable Integer id) {
         villeService.deleteVille(id);
         return villeService.getVilles();
     }
@@ -76,10 +76,42 @@ public class VilleController {
      * @return List<Ville> la liste des villes
      */
     @PutMapping("/{id}")
-    public List<Ville> updateVille(@PathVariable long id, @RequestBody Ville ville) {
+    public List<Ville> updateVille(@PathVariable Integer id, @RequestBody Ville ville) {
         villeService.updateVille(id, ville);
         return villeService.getVilles();
     }
 
 
+    /**
+     * Rechercher les villes par nom
+     *
+     * @param prefix
+     * @return
+     */
+    @GetMapping("/search")
+    public List<Ville> searchVillesLike(@RequestParam String prefix) {
+        prefix = "%" + prefix + "%";
+        return villeService.getVillesByNameStartingWith(prefix);
+    }
+
+    /**
+     * Rechercher les villes par population minimale
+     * @param min
+     * @return
+     */
+    @GetMapping("/min")
+    public List<Ville> searchVillesByMin(@RequestParam int min) {
+        return villeService.getVillesByPopulationGreaterThan(min);
+    }
+
+    /**
+     * Rechercher les villes par population minimale et maximale
+     * @param min
+     * @param max
+     * @return
+     */
+    @GetMapping("/between")
+    public List<Ville> searchVillesBetween(@RequestParam int min, @RequestParam int max) {
+        return villeService.getVillesByPopulationBetween(min, max);
+    }
 }

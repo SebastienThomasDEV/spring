@@ -4,10 +4,12 @@ package com.example.demo.controller;
 import com.example.demo.entity.Departement;
 import com.example.demo.entity.Ville;
 import com.example.demo.service.DepartementService;
+import com.example.demo.service.VilleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -25,6 +27,9 @@ public class DepartementController {
      */
     @Autowired
     private DepartementService departementService;
+
+    @Autowired
+    private VilleService villeService;
 
 
     /**
@@ -145,24 +150,39 @@ public class DepartementController {
     }
 
     /**
-     * Récupérer la liste des villes d'un département triées par nombre d'habitants
+     * Récupérer les villes d'un département par ordre croissant de nombre d'habitants
      * @param id l'id du département
      * @return List<Ville> la liste des villes
      */
-    @GetMapping("/{id}/villes/most_populated")
-    public List<Ville> getVillesSortedByNbHabitants(@PathVariable long id) {
-        return departementService.getVillesSortedByNbHabitants(id);
+    @GetMapping("/{id}/villes/desc")
+    public List<Ville> getVillesDescLimit(@PathVariable long id , @RequestParam int limit) {
+        Departement departement = getDepartement(id);
+        return departement
+                .getVilles()
+                .stream()
+                .sorted((v1, v2) -> v2.getNbHabitants() - v1.getNbHabitants())
+                .limit(limit)
+                .collect(Collectors.toList());
     }
-
 
     /**
-     * Récupérer la liste des villes d'un département triées par ordre croissant du nombre d'habitants
+     * Récupérer les villes d'un département triées par un maximun et un minimum de nombre d'habitants
+     *
      * @param id l'id du département
+     * @param min le minimum de nombre d'habitants
+     * @param max le maximum de nombre d'habitants
      * @return List<Ville> la liste des villes
      */
-    @GetMapping("/{id}/villes/range")
-    public List<Ville> getVillesByNbHabitantsRange(@PathVariable long id, @RequestParam int min, @RequestParam int max) {
-        if (min > max) throw new IllegalArgumentException("Le nombre minimum d'habitants doit être inférieur au nombre maximum");
-        return departementService.getVillesByNbHabitantsRange(id, min, max);
+    @GetMapping("/{id}/villes/between")
+    public List<Ville> getVillesBetween(@PathVariable long id, @RequestParam int min, @RequestParam int max) {
+        Departement departement = getDepartement(id);
+        return departement
+                .getVilles()
+                .stream()
+                .filter(v -> v.getNbHabitants() >= min && v.getNbHabitants() <= max)
+                .collect(Collectors.toList());
     }
+
+
+
 }

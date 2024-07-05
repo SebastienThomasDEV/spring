@@ -6,10 +6,7 @@ import com.example.demo.entity.Ville;
 import com.example.demo.repository.DepartementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service de gestion des départements
@@ -168,30 +165,8 @@ public class DepartementService {
         return null;
     }
 
-    /**
-     * Récupérer la liste des villes d'un département triées par ordre croissant du nombre d'habitants
-     * @param id l'id du département
-     * @return List<Ville> la liste des villes
-     */
-    public List<Ville> getVillesSortedByNbHabitants(Long id) {
-        Departement departement = DepartementRepository.findById(id).orElse(null);
-        if (departement != null) {
-            return departement.getVilles().stream().sorted(Comparator.comparingInt(Ville::getNbHabitants)).collect(Collectors.toList());
-        }
-        return null;
-    }
 
-    /**
-     * Récupérer la liste des villes d'un département triées par ordre décroissant du nombre d'habitants
-     * @param id l'id du département
-     * @return List<Ville> la liste des villes
-     */
-    public List<Ville> getVillesByNbHabitantsRange(Long id, int min, int max) {
-        Departement departement = DepartementRepository.findById(id).orElse(null);
-        if (departement != null) {
-            return departement.getVilles().stream().filter(v -> v.getNbHabitants() >= min && v.getNbHabitants() <= max).collect(Collectors.toList());
-        }
-        return null;
-    }
+
+
 
 }

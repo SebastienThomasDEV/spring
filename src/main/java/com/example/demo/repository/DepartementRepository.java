@@ -1,7 +1,6 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Departement;
-import com.example.demo.entity.Ville;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +12,6 @@ import org.springframework.stereotype.Repository;
  * @Repository permet de dire à Spring que c'est un repository
  */
 @Repository
-public interface DepartementRepository extends JpaRepository<Departement, Long> {}
+public interface DepartementRepository extends JpaRepository<Departement, Long> {
+
+}

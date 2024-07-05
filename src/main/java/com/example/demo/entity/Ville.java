@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -58,6 +59,7 @@ public class Ville {
      */
     @ManyToOne
     @JoinColumn(name = "departement_id")
+    @JsonBackReference
     private Departement departement;
 
 
