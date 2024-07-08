@@ -1,12 +1,15 @@
 package com.example.demo.controller;
 
+import com.example.demo.ApiException;
 import com.example.demo.entity.Ville;
 import com.example.demo.service.VilleService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.http.HttpHeaders;
 import java.util.List;
 
 @RestController
@@ -27,7 +30,7 @@ public class VilleController {
      * @return List<Ville> la liste des villes
      */
     @GetMapping
-    public List<Ville> getVilles() {
+    public List<Ville> getVilles() throws ApiException {
         return villeService.getVilles();
     }
 
@@ -37,7 +40,7 @@ public class VilleController {
      * @return Ville la ville
      */
     @GetMapping("/{id}")
-    public Ville getVille(@PathVariable Integer id) {
+    public Ville getVille(@PathVariable Integer id) throws ApiException {
         return villeService.getVilleById(id);
     }
 
@@ -48,7 +51,7 @@ public class VilleController {
      * @return String message de confirmation
      */
     @PostMapping
-    public String addVille(@Valid @RequestBody Ville ville, BindingResult bindingResult) {
+    public String addVille(@Valid @RequestBody Ville ville, BindingResult bindingResult) throws ApiException {
         if (bindingResult.hasErrors()) {
             return bindingResult.getAllErrors().get(0).getDefaultMessage();
         }
@@ -63,7 +66,7 @@ public class VilleController {
      * @return List<Ville> la liste des villes
      */
     @DeleteMapping("/{id}")
-    public List<Ville> deleteVille(@PathVariable Integer id) {
+    public List<Ville> deleteVille(@PathVariable Integer id) throws ApiException {
         villeService.deleteVille(id);
         return villeService.getVilles();
     }
@@ -76,7 +79,7 @@ public class VilleController {
      * @return List<Ville> la liste des villes
      */
     @PutMapping("/{id}")
-    public List<Ville> updateVille(@PathVariable Integer id, @RequestBody Ville ville) {
+    public List<Ville> updateVille(@PathVariable Integer id, @RequestBody Ville ville) throws ApiException {
         villeService.updateVille(id, ville);
         return villeService.getVilles();
     }
@@ -89,7 +92,7 @@ public class VilleController {
      * @return
      */
     @GetMapping("/search")
-    public List<Ville> searchVillesLike(@RequestParam String prefix) {
+    public List<Ville> searchVillesLike(@RequestParam String prefix) throws ApiException {
         prefix = "%" + prefix + "%";
         return villeService.getVillesByNameStartingWith(prefix);
     }
@@ -100,7 +103,7 @@ public class VilleController {
      * @return
      */
     @GetMapping("/min")
-    public List<Ville> searchVillesByMin(@RequestParam int min) {
+    public List<Ville> searchVillesByMin(@RequestParam int min) throws ApiException {
         return villeService.getVillesByPopulationGreaterThan(min);
     }
 
@@ -111,7 +114,19 @@ public class VilleController {
      * @return
      */
     @GetMapping("/between")
-    public List<Ville> searchVillesBetween(@RequestParam int min, @RequestParam int max) {
+    public List<Ville> searchVillesBetween(@RequestParam int min, @RequestParam int max) throws ApiException {
         return villeService.getVillesByPopulationBetween(min, max);
+    }
+
+    /**
+     * Exporter les villes en CSV
+     *
+     * @return
+     */
+    @GetMapping("/export")
+    public String exportVilles(HttpServletResponse response) throws ApiException {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=\"villes.csv\"");
+        return villeService.exportVillesToCSV();
     }
 }

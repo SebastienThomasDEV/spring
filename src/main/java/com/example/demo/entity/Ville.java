@@ -3,10 +3,7 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 /**
  * Entité Ville
@@ -41,6 +38,7 @@ public class Ville {
      * Le nom de la ville
      */
     @Column(nullable = false)
+    @NotBlank
     @NotNull(message = "Le nom de la ville ne peut pas être nul")
     @Size(min = 3, max = 50, message = "Le nom de la ville doit contenir entre 3 et 50 caractères")
     private String nom;
@@ -49,7 +47,8 @@ public class Ville {
      * Le nombre d'habitants de la ville
      */
     @NotNull(message = "Le nombre d'habitants de la ville ne peut pas être nul")
-    @Size(min = 1, message = "Le nombre d'habitants de la ville doit être supérieur à 0")
+    @Size(min = 10, message = "Le nombre d'habitants de la ville doit être supérieur à 0")
+    @NotBlank
     @Column(nullable = false)
     private int nbHabitants;
 
@@ -59,6 +58,7 @@ public class Ville {
      */
     @ManyToOne
     @JoinColumn(name = "departement_id")
+    @NotNull(message = "Le département de la ville ne peut pas être nul")
     @JsonBackReference
     private Departement departement;
 
